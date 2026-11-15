@@ -6,8 +6,14 @@ class DomainError(ValueError):
 
 
 def validate_amount(amount: Decimal) -> Decimal:
-    if not amount.is_finite() or amount <= 0 or amount.as_tuple().exponent < -2:
-        raise DomainError("O valor deve ser positivo e ter no máximo duas casas decimais")
+    message = "O valor deve ser positivo e ter no máximo duas casas decimais"
+    if not amount.is_finite() or amount <= 0:
+        raise DomainError(message)
+
+    _, digits, exponent = amount.as_tuple()
+    if exponent < -2 and any(digits[exponent + 2:]):
+        raise DomainError(message)
+
     return amount
 
 
