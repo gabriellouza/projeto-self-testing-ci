@@ -1,0 +1,10 @@
+[2026-11-15 19:19:39,419] d917ef1de670/INFO/locust.main: Starting Locust 2.47.0
+[2026-11-15 19:19:39,419] d917ef1de670/INFO/locust.main: Run time limit set to 30 seconds
+Type     Name                                                                          # reqs      # fails |    Avg     Min     Max    Med |   req/s  failures/s
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+--------|----------------------------------------------------------------------------|-------|-------------|-------|-------|-------|-------|--------|-----------
+         Aggregated                                                                         0     0(0.00%) |      0       0       0      0 |    0.00        0.00
+
+[2026-11-15 19:19:39,437] d917ef1de670/INFO/locust.runners: Ramping to 1 users at a rate of 1.00 per second
+[2026-11-15 19:19:39,437] d917ef1de670/INFO/locust.runners: All users spawned: {"WalletUser": 1} (1 total users)
+[2026-11-15 19:19:39,891] d917ef1de670/INFO/locust.main: Shutting down (exit code 0)

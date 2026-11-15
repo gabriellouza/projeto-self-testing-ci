@@ -1,0 +1,72 @@
+INFO:     Started server process [12]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://127.0.0.1:8001 (Press CTRL+C to quit)
+TRANSFER_TRACE {"start_ns": 942427732637, "end_ns": 942489850410, "status": 201}
+TRANSFER_TRACE {"start_ns": 942429754282, "end_ns": 942498293407, "status": 201}
+TRANSFER_TRACE {"start_ns": 942431213958, "end_ns": 942501917108, "status": 201}
+TRANSFER_TRACE {"start_ns": 942431752964, "end_ns": 942505196821, "status": 201}
+TRANSFER_TRACE {"start_ns": 942463470598, "end_ns": 942509670236, "status": 201}
+TRANSFER_TRACE {"start_ns": 942431916055, "end_ns": 942513664474, "status": 201}
+TRANSFER_TRACE {"start_ns": 942439971329, "end_ns": 942516648901, "status": 201}
+TRANSFER_TRACE {"start_ns": 942432229748, "end_ns": 942521753638, "status": 201}
+TRANSFER_TRACE {"start_ns": 942465538792, "end_ns": 942527607788, "status": 201}
+TRANSFER_TRACE {"start_ns": 942441136059, "end_ns": 942530111745, "status": 201}
+TRANSFER_TRACE {"start_ns": 942462670857, "end_ns": 942540475258, "status": 201}
+TRANSFER_TRACE {"start_ns": 942439753067, "end_ns": 942544892380, "status": 201}
+TRANSFER_TRACE {"start_ns": 942440410247, "end_ns": 942550209561, "status": 201}
+TRANSFER_TRACE {"start_ns": 942439397331, "end_ns": 942555291946, "status": 201}
+TRANSFER_TRACE {"start_ns": 942463885210, "end_ns": 942559167694, "status": 201}
+TRANSFER_TRACE {"start_ns": 942463712485, "end_ns": 942562889560, "status": 201}
+TRANSFER_TRACE {"start_ns": 942431480001, "end_ns": 942568615355, "status": 201}
+TRANSFER_TRACE {"start_ns": 942441026146, "end_ns": 942571530660, "status": 201}
+TRANSFER_TRACE {"start_ns": 942441288063, "end_ns": 942577309983, "status": 201}
+TRANSFER_TRACE {"start_ns": 942441515649, "end_ns": 942579875111, "status": 201}
+TRANSFER_TRACE {"start_ns": 942464137803, "end_ns": 942584680807, "status": 201}
+TRANSFER_TRACE {"start_ns": 942428919259, "end_ns": 942587960550, "status": 201}
+TRANSFER_TRACE {"start_ns": 942440098246, "end_ns": 942592352134, "status": 201}
+TRANSFER_TRACE {"start_ns": 942439622704, "end_ns": 942595673388, "status": 201}
+TRANSFER_TRACE {"start_ns": 942463032441, "end_ns": 942601376680, "status": 201}
+TRANSFER_TRACE {"start_ns": 942463992849, "end_ns": 942603983328, "status": 201}
+TRANSFER_TRACE {"start_ns": 942439844461, "end_ns": 942609915508, "status": 201}
+TRANSFER_TRACE {"start_ns": 942440258933, "end_ns": 942613977466, "status": 201}
+TRANSFER_TRACE {"start_ns": 942464404186, "end_ns": 942617062732, "status": 201}
+TRANSFER_TRACE {"start_ns": 942465033596, "end_ns": 942620719752, "status": 201}
+TRANSFER_TRACE {"start_ns": 942465144660, "end_ns": 942626220915, "status": 201}
+TRANSFER_TRACE {"start_ns": 942440562702, "end_ns": 942628643301, "status": 201}
+TRANSFER_TRACE {"start_ns": 942440762737, "end_ns": 942632411425, "status": 201}
+TRANSFER_TRACE {"start_ns": 942464930073, "end_ns": 942635985383, "status": 201}
+TRANSFER_TRACE {"start_ns": 942465330424, "end_ns": 942639535565, "status": 201}
+TRANSFER_TRACE {"start_ns": 942465446596, "end_ns": 942643048082, "status": 201}
+TRANSFER_TRACE {"start_ns": 942464590852, "end_ns": 942647401319, "status": 201}
+TRANSFER_TRACE {"start_ns": 942465636486, "end_ns": 942651714639, "status": 201}
+TRANSFER_TRACE {"start_ns": 942440663311, "end_ns": 942655085115, "status": 201}
+TRANSFER_TRACE {"start_ns": 942465885985, "end_ns": 942657933842, "status": 201}
+TRANSFER_TRACE {"start_ns": 942466055715, "end_ns": 942660968152, "status": 201}
+TRANSFER_TRACE {"start_ns": 942466340466, "end_ns": 942663910167, "status": 201}
+TRANSFER_TRACE {"start_ns": 942474388389, "end_ns": 942667517543, "status": 201}
+TRANSFER_TRACE {"start_ns": 942464793531, "end_ns": 942671907595, "status": 201}
+TRANSFER_TRACE {"start_ns": 942472991206, "end_ns": 942673790916, "status": 201}
+TRANSFER_TRACE {"start_ns": 942472792773, "end_ns": 942679372558, "status": 201}
+TRANSFER_TRACE {"start_ns": 942465957400, "end_ns": 942684573017, "status": 201}
+TRANSFER_TRACE {"start_ns": 942429066086, "end_ns": 942687573888, "status": 201}
+TRANSFER_TRACE {"start_ns": 942465752958, "end_ns": 942692334678, "status": 201}
+TRANSFER_TRACE {"start_ns": 942473118744, "end_ns": 942695500182, "status": 201}
+TRANSFER_TRACE {"start_ns": 942463353705, "end_ns": 942698926151, "status": 201}
+TRANSFER_TRACE {"start_ns": 942474102507, "end_ns": 942703468138, "status": 201}
+TRANSFER_TRACE {"start_ns": 942474267891, "end_ns": 942706295673, "status": 201}
+TRANSFER_TRACE {"start_ns": 942441623809, "end_ns": 942708073938, "status": 201}
+TRANSFER_TRACE {"start_ns": 942464688476, "end_ns": 942721635804, "status": 201}
+TRANSFER_TRACE {"start_ns": 942463611105, "end_ns": 942729638821, "status": 201}
+TRANSFER_TRACE {"start_ns": 942463230714, "end_ns": 942732904553, "status": 201}
+TRANSFER_TRACE {"start_ns": 942464319702, "end_ns": 942736409058, "status": 201}
+TRANSFER_TRACE {"start_ns": 942439198908, "end_ns": 942741687121, "status": 201}
+TRANSFER_TRACE {"start_ns": 942466210954, "end_ns": 942767535359, "status": 201}
+TRANSFER_TRACE {"start_ns": 942440883666, "end_ns": 942783333937, "status": 201}
+TRANSFER_TRACE {"start_ns": 942429907228, "end_ns": 942788559603, "status": 201}
+TRANSFER_TRACE {"start_ns": 942430897791, "end_ns": 942804810359, "status": 201}
+TRANSFER_TRACE {"start_ns": 942441380039, "end_ns": 942842759534, "status": 201}
+INFO:     Shutting down
+INFO:     Waiting for application shutdown.
+INFO:     Application shutdown complete.
+INFO:     Finished server process [12]

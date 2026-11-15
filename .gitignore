@@ -8,3 +8,11 @@ htmlcov/
 *.db
 .env
 .ruff_cache/
+*.sqlite
+*.sqlite3
+*.db-wal
+*.db-shm
+ci-*.log
+performance/results*
+!docs/evidencias/ci-local/coverage.xml
+!docs/evidencias/ci-local/junit.xml

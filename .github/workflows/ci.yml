@@ -9,6 +9,9 @@ permissions:
 jobs:
   quality:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-python@v5
@@ -18,11 +21,11 @@ jobs:
       - name: Install dependencies
         run: python -m pip install -r requirements.txt
       - name: Lint
-        run: python -m ruff check src tests
+        run: python -m ruff check src tests scripts performance 2>&1 | tee ci-lint.log
       - name: Tests and coverage
-        run: python -m pytest --cov=src --cov-branch --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=junit.xml
+        run: python -m pytest --cov=src --cov-branch --cov-report=term-missing --cov-report=xml:coverage.xml --junitxml=junit.xml 2>&1 | tee ci-tests.log
       - name: Coverage gates (lines >= 85%, branches >= 80%)
-        run: python scripts/check_coverage.py coverage.xml
+        run: python scripts/check_coverage.py coverage.xml 2>&1 | tee ci-coverage.log
       - name: Upload reports
         if: always()
         uses: actions/upload-artifact@v4
@@ -31,4 +34,5 @@ jobs:
           path: |
             coverage.xml
             junit.xml
+            ci-*.log
           if-no-files-found: warn
