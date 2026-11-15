@@ -20,3 +20,8 @@ def test_debit_success():
 def test_debit_insufficient():
     with pytest.raises(DomainError, match="insuficiente"):
         debit(Decimal("5"), Decimal("10"))
+
+@pytest.mark.parametrize("text", ["1.2300", "0.010"])
+def test_accept_amount_with_only_trailing_zeroes_after_cents(text):
+    amount = Decimal(text)
+    assert validate_amount(amount) == amount

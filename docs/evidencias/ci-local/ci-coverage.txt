@@ -1,0 +1,1 @@
+Linhas: 99.51% (mínimo 85%) | Branches: 95.45% (mínimo 80%)

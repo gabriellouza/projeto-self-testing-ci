@@ -1,58 +1,90 @@
 # Relatório técnico — Wallet API
 
-## 1. Objetivo
-API REST didática de conciliação simplificada e carteira digital, com automação de qualidade e testes em múltiplos níveis.
+**Gabriel Alves Louza · Engenharia de Software · UniEVANGÉLICA**
 
-## 2. Requisitos funcionais (SRS)
-- RF-01: criar conta com titular e saldo inicial não negativo.
-- RF-02: consultar conta e saldo atual.
-- RF-03: transferir valores positivos com até duas casas decimais.
-- RF-04: recusar saldo insuficiente e contas inexistentes.
-- RF-05: garantir idempotência por chave única; rejeitar reutilização com dados diferentes.
-- RF-06: emitir extrato de débitos e créditos filtrado por tipo e intervalo.
-- RF-07: integrar um notificador antifraude fictício, validado por mock.
+Integração Contínua de Software · Projeto Capstone: 7 Dias
 
-## 3. Requisitos não funcionais
-- RNF-01: transação atômica com atualização condicional de saldo e rollback em erros.
-- RNF-02: cobertura >= 85% de linhas e >= 80% de branches.
-- RNF-03: pipeline em push e pull request com lint e testes.
-- RNF-04: artefatos de cobertura e resultado de testes no GitHub Actions.
-- RNF-05: teste de carga com 50 usuários concorrentes, taxa de erro e latência média.
+## 1. Objetivo e requisitos
 
-## 4. Arquitetura
-FastAPI (controllers), regras financeiras (domain), orquestração de transferências (services), persistência SQLAlchemy/SQLite (repositories). Valores monetários usam Decimal/Numeric(18,2).
+Construir uma API REST didática para movimentação de saldo e extrato, demonstrando transações consistentes, automação de qualidade e evidências verificáveis. A referência principal é o enunciado **Atividade Prática Avaliativa (Projeto Capstone: 7 Dias)**, pp. 1–3. O material das aulas é complementar.
 
-O débito usa UPDATE condicional (`balance >= amount`) dentro de transação. A chave de idempotência tem restrição UNIQUE no banco. SQLite é suficiente para demonstração local, mas sob carga pesada pode produzir bloqueios; PostgreSQL é recomendado para produção. O gateway antifraude é um adapter fictício (sem webhook HTTP real), com interações verificadas por mock.
+| ID | Requisito funcional | Evidência local |
+|---|---|---|
+| RF-01 | Criar conta com titular e saldo inicial não negativo | Integração e fluxo E2E |
+| RF-02 | Consultar conta e saldo atual | Fluxo E2E |
+| RF-03 | Transferir valor positivo com precisão de centavos | Unitários, integração e E2E |
+| RF-04 | Rejeitar saldo insuficiente, contas inexistentes e transferência para a mesma conta | Integração e disputa de saldo |
+| RF-05 | Repetir a mesma chave sem novo débito, extrato ou notificação e rejeitar reuso com dados conflitantes | Integração e disputas concorrentes |
+| RF-06 | Consultar extrato por data e tipo de lançamento | E2E com quatro datas e limites inclusivos |
+| RF-07 | Enviar confirmação a um webhook antifraude fictício configurável | Mock do HTTPX e demonstração HTTP local |
 
-## 5. Estratégia de branching
-Trunk-Based Development: criar branches curtas `feature/...` ou `hotfix/...`, abrir PR para `main`, exigir CI verde e revisão antes de merge. Registrar duas correções/merges reais com histórico verificável.
+| ID | Requisito não funcional | Verificação |
+|---|---|---|
+| RNF-01 | Manter débito, crédito, transferência e extrato atômicos | SQLite, contas e lançamentos verificados após disputas |
+| RNF-02 | Cobertura independente ≥ 85% de linhas e ≥ 80% de branches | Coverage.py e gate executados localmente |
+| RNF-03 | Rodar lint e testes em push/PR e bloquear merges se o CI não passar | Workflow validado localmente. Execução e proteção remotas pendentes |
+| RNF-04 | Publicar cobertura, JUnit e logs em um artefato de CI | Cinco arquivos gerados localmente. Publicação remota pendente |
+| RNF-05 | Medir ≥ 50 POSTs simultâneos de transferência, erros e latência | 64 requisições sobrepostas no servidor em rodada local |
 
-## 6. Evidências de TDD — PREENCHER APÓS EXECUTAR
-- Red: commit e log de teste falhando: [link]
-- Green: commit e log do teste passando: [link]
-- Refactor: commit de refatoração e log: [link]
-- Correção/merge 1: [link]
-- Correção/merge 2: [link]
+## 2. Arquitetura preservada
 
-## 7. Pirâmide de testes
-- Unitários: validação e débito financeiro puro.
-- Integração: persistência SQLite em memória, Mock do notificador (contagem/parâmetros) e Stub de validação cadastral.
-- E2E: TestClient HTTP com criação de contas, transferência, extrato e erros.
+- **`src/controllers`** mantém os contratos das rotas e traduz erros de domínio em respostas HTTP.
+- **`src/domain`** contém entidades e regras de valor e saldo, usando `Decimal` e colunas `Numeric(18,2)`.
+- **`src/services`** coordena cadastro e transferência. Mantém a atualização condicional do saldo (`balance >= amount`), a restrição única da chave e a reversão em caso de erro. O notificador HTTP roda apenas no caminho de transferência nova, depois do commit.
+- **`src/repositories`** abre sessões SQLAlchemy e configura SQLite. A contabilidade e as rotas não foram reescritas. O webhook tem timeout de 2 segundos e falha não reverte a transação confirmada. Não há retry nem confirmação de entrega durável.
 
-## 8. CI e cobertura — PREENCHER APÓS EXECUTAR
-- Execução GitHub Actions: [link]
-- Cobertura de linhas: [valor real]
-- Cobertura de branches: [valor real]
-- Artefatos `coverage.xml` e `junit.xml`: [link]
-- Branch protection/ruleset: [captura ou link]
+## 3. Pirâmide de testes e evidência local
 
-## 9. Carga e resiliência — PREENCHER APÓS EXECUTAR
-- Ferramenta: Locust, 50 usuários concorrentes, spawn-rate 10, 60 segundos.
-- Comando: `locust -f performance/locustfile.py --headless -u 50 -r 10 -t 60s --host http://127.0.0.1:8000 --csv performance/results`
-- Requisições totais: [valor]
-- Taxa de erro: [valor]
-- Latência média: [valor em ms]
-- Observações sobre bloqueios SQLite: [resultado real]
+- **7 unitários:** lógica pura de validação de valores e débito.
+- **12 de integração:** SQLite em memória para cenários comuns e arquivo temporário com conexões independentes para concorrência. Uma barreira posicionada imediatamente antes do débito faz as requisições disputarem o saldo ou a mesma chave. Foram verificados status, IDs, saldos finais, os dois lançamentos e uma única notificação após o commit. A variante com saldo sobrando também atravessa a restrição única e verifica o rollback do segundo débito.
+- **2 E2E:** requisições pelo FastAPI TestClient com criação de contas, transferência, extrato e respostas de erro. Datas controladas mostram que o filtro inclui os dois limites e exclui os lançamentos anteriores e posteriores.
+- **Mock:** verifica uma única chamada HTTP, URL, payload e timeout. Um segundo cenário simula timeout e confirma que a transferência já persistida não é revertida. **Stub:** responde sempre `False` na validação cadastral e não verifica interações.
 
-## 10. Limitações
-Não há autenticação de clientes nem integração bancária real. Notificações antifraude são simuladas; a entrega confiável de webhooks em produção exigiria outbox/retry. Não publicar credenciais em código.
+| Execução local | Testes | Linhas | Branches | Ruff |
+|---|---:|---:|---:|---|
+| Windows, log anterior fornecido, Python 3.15.2 | 17 | 97,53% | 92,11% | F401 apontado no log seguinte |
+| ZIP original reexecutado, Linux/Python 3.12.14 | 17 | 97,58% | 92,11% | F401 confirmado |
+| Base revisada, Linux/Python 3.12.14 | 21 | 99,51% | 95,45% | Aprovado |
+
+A base revisada passou com os mesmos comandos Bash do workflow. A cobertura revisada inclui `src/repositories/database.py`, antes excluído, e mede todo `src`. O gate compara as contagens exatas do XML, sem arredondar os limites. Foi verificado que 85%/80% passam e que ficar abaixo em qualquer das métricas falha sozinho. O TestClient ainda emite um aviso de depreciação do HTTPX na versão instalada, sem falha de teste. Nenhum resultado local é execução do Actions.
+
+Evidências em [docs/evidencias](docs/evidencias/). O [teste HTTP do webhook](docs/evidencias/webhook/http.txt) registrou duas respostas HTTP 201 para a mesma chave (primeira nova, segunda repetida) e um único POST ao receptor, com resposta 204.
+
+## 4. Desempenho local
+
+Execução com Locust 2.47.0 e Uvicorn, loopback, um processo servidor, SQLite separado e webhook desativado. Um coordenador liberou 64 requisições `POST /transfers` na mesma barreira, todas para o mesmo par de contas, com chaves distintas. A instrumentação ASGI mediu a sobreposição entre início e fim de cada requisição sem introduzir atraso. O limite de execução era 30 s, e a rodada terminou automaticamente após a rajada. A criação das contas não compõe as métricas.
+
+| Métrica | Medição |
+|---|---:|
+| Requisições ao endpoint | 64 |
+| Pico simultâneo observado no servidor | 64 |
+| Respostas HTTP 201 | 64 |
+| Erros / taxa de erro | 0 / 0,00% |
+| Latência média pelo Locust | 213,04 ms |
+| Saldos finais | 99.936,00 na origem e 64,00 no destino |
+| Lançamentos persistidos | 64 débitos e 64 créditos |
+
+A primeira tentativa também completou 64 respostas 201, mas o CSV periódico não gravou a rodada curta. A exportação foi trocada para o JSON final do Locust e o pool do gerador foi ajustado para as 64 conexões. A rodada acima usa o exportador final. Não houve bloqueio reportado pelo SQLite, timeout nem falha HTTP nessa rodada. Isso comprova a rajada local, não capacidade de produção ou carga sustentada.
+
+Evidências: [resumo](docs/evidencias/carga/summary.json), [intervalos ASGI](docs/evidencias/carga/servidor.txt), [estatísticas Locust](docs/evidencias/carga/locust-stats.json) e [conferência da persistência](docs/evidencias/carga/database-check.txt).
+
+## 5. Git, TDD e CI remoto — pendentes de publicação
+
+[Repositório de destino](https://github.com/gabriellouza/projeto-self-testing-ci). A revisão foi feita a partir do ZIP, sem inicializar Git, publicar código, criar commits ou abrir PRs.
+
+- **Trunk-Based:** branches curtas a partir de `main` com PRs revisados, mensagens de commit claras e check obrigatório. Sugestões de merges reais: `feature/concorrencia-extrato` para testes e evidências do núcleo, `feature/webhook-antifraude` para o gateway. O roteiro de publicação do pacote indica os arquivos de cada PR.
+- **TDD:** o ajuste de validação para aceitar zeros à direita de centavos (por exemplo, `1.2300`) não está na base. Um ensaio isolado confirmou duas falhas esperadas por `DomainError` no Red e 23 testes passando em Green e Refactor. Esse ensaio não é histórico Git. Os três commits devem ser feitos na ordem do roteiro, preservando o Red no histórico.
+- **Actions:** workflow aprovado no actionlint. Gatilhos de push e pull request e caminhos do artefato conferidos localmente. Nenhum check obrigatório, execução remota ou upload foi confirmado.
+
+Após publicar, registre no relatório e no PDF:
+
+| Evidência a anexar | Situação |
+|---|---|
+| PR 1 e PR 2 mesclados, com revisão real quando realizada | Pendente |
+| Commits Red, Green e Refactor, com logs associados | Pendente |
+| URLs das execuções de push e pull request, com job `quality` | Pendente |
+| Página da execução que contém `wallet-ci-reports` e confirmação de download | Pendente |
+| Regra de proteção da `main` e evidência do check obrigatório | Pendente |
+| Permalinks das evidências locais versionadas (CI, carga e webhook) | Pendente de publicação |
+
+Antes de enviar, confirme que o professor consegue acessar os links. No AVA, envie apenas o PDF individual atualizado.

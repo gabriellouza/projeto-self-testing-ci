@@ -1,5 +1,6 @@
 from decimal import Decimal
 from unittest.mock import Mock
+import httpx
 import pytest
 from sqlalchemy import select
 from src.domain.models import Account, LedgerEntry, Transfer
@@ -7,27 +8,61 @@ from src.domain.rules import DomainError
 from src.services.wallet import create_account, transfer_funds
 
 
-def test_mock_notifier_called_once_with_transfer(db):
+WEBHOOK_URL = "http://127.0.0.1:9001/antifraud"
+
+
+def test_mock_antifraud_receives_committed_transfer_only_once(db, monkeypatch):
     a = create_account(db, "Ana", Decimal("100"))
     b = create_account(db, "Bia", Decimal("0"))
-    notifier = Mock()
-    transfer, created = transfer_funds(db, a.id, b.id, Decimal("25"), "key-1", notifier)
+    response = Mock()
+    post = Mock(return_value=response)
+    monkeypatch.setenv("ANTIFRAUD_WEBHOOK_URL", WEBHOOK_URL)
+    monkeypatch.setattr("src.services.wallet.httpx.post", post)
+
+    transfer, created = transfer_funds(db, a.id, b.id, Decimal("25"), "key-1")
     assert created
-    notifier.notify.assert_called_once_with(transfer)
+    _, created_again = transfer_funds(db, a.id, b.id, Decimal("25"), "key-1")
+    assert not created_again
+    post.assert_called_once_with(WEBHOOK_URL, json={
+        "event": "transfer.confirmed",
+        "transfer_id": transfer.id,
+        "source_id": a.id,
+        "destination_id": b.id,
+        "amount": "25.00",
+    }, timeout=2.0)
+    response.raise_for_status.assert_called_once_with()
     assert db.get(Account, a.id).balance == 75
     assert db.get(Account, b.id).balance == 25
     assert len(db.scalars(select(LedgerEntry)).all()) == 2
-    _, created_again = transfer_funds(db, a.id, b.id, Decimal("25"), "key-1", notifier)
-    assert not created_again
-    notifier.notify.assert_called_once()
+
+
+def test_webhook_timeout_does_not_undo_committed_transfer(db, monkeypatch, caplog):
+    a = create_account(db, "Ana", Decimal("20"))
+    b = create_account(db, "Bia", Decimal("0"))
+    post = Mock(side_effect=httpx.ConnectTimeout("tempo esgotado"))
+    monkeypatch.setenv("ANTIFRAUD_WEBHOOK_URL", WEBHOOK_URL)
+    monkeypatch.setattr("src.services.wallet.httpx.post", post)
+
+    transfer, created = transfer_funds(db, a.id, b.id, Decimal("10"), "timeout")
+    assert created
+    db.expire_all()
+    assert db.get(Transfer, transfer.id) is not None
+    assert db.get(Account, a.id).balance == 10
+    assert db.get(Account, b.id).balance == 10
+    assert "Webhook antifraude falhou" in caplog.text
+    assert transfer_funds(db, a.id, b.id, Decimal("10"), "timeout")[1] is False
+    post.assert_called_once()
+
+
+class RejectedRegistrationStub:
+    def is_valid(self, owner: str) -> bool:
+        return False
 
 
 def test_stub_registration(db):
-    validator = Mock()
-    validator.is_valid.return_value = False
     with pytest.raises(DomainError, match="Cadastro"):
-        create_account(db, "Ana", Decimal("5"), validator)
-    validator.is_valid.assert_called_once_with("Ana")
+        create_account(db, "Ana", Decimal("5"), RejectedRegistrationStub())
+    assert db.scalars(select(Account)).all() == []
 
 
 @pytest.mark.parametrize("balance", [Decimal("-1"), Decimal("1.234"), Decimal("NaN")])
