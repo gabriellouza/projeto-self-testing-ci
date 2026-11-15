@@ -1,0 +1,5 @@
+Primeiro POST: 201 {"id":1,"amount":5.0,"created":true}
+Reenvio com a mesma chave: 201 {"id":1,"amount":5.0,"created":false}
+Webhook em http://127.0.0.1:9001/antifraud
+{"event": "transfer.confirmed", "transfer_id": 1, "source_id": 1, "destination_id": 2, "amount": "5.00"}
+127.0.0.1 - - [15/Nov/2026 19:20:38] "POST /antifraud HTTP/1.1" 204 -

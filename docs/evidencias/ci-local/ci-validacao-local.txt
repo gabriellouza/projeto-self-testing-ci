@@ -1,0 +1,6 @@
+1.7.12
+Workflow validado estaticamente: push/main/feature/**/hotfix/**, pull_request para main.
+Cinco arquivos previstos no artefato gerados localmente; upload remoto não executado.
+Gate (85% linhas, 80% branches) -> saída 0
+Gate (84% linhas, 100% branches) -> saída 1
+Gate (100% linhas, 79% branches) -> saída 1

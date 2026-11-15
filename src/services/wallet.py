@@ -1,4 +1,8 @@
+import logging
+import os
 from decimal import Decimal
+
+import httpx
 from sqlalchemy import select, update
 from sqlalchemy.exc import IntegrityError, OperationalError
 from sqlalchemy.orm import Session
@@ -6,10 +10,28 @@ from src.domain.models import Account, Transfer, LedgerEntry
 from src.domain.rules import DomainError, validate_amount
 
 
+logger = logging.getLogger(__name__)
+
+
 class Notifier:
     def notify(self, transfer: Transfer) -> None:
-        """Gateway fictício: substituível por mock; não faz chamadas externas."""
-        return None
+        """Envia o evento pós-commit quando o webhook fictício está configurado."""
+        url = os.getenv("ANTIFRAUD_WEBHOOK_URL", "").strip()
+        if not url:
+            return
+        payload = {
+            "event": "transfer.confirmed",
+            "transfer_id": transfer.id,
+            "source_id": transfer.source_id,
+            "destination_id": transfer.destination_id,
+            "amount": format(transfer.amount, ".2f"),
+        }
+        try:
+            response = httpx.post(url, json=payload, timeout=2.0)
+            response.raise_for_status()
+        except (httpx.HTTPError, httpx.InvalidURL) as exc:
+            # A transferência já foi persistida e não é revertida por falha do webhook.
+            logger.warning("Webhook antifraude falhou (transferência %s, %s)", transfer.id, type(exc).__name__)
 
 
 class RegistrationStub:
