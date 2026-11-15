@@ -1,0 +1,12 @@
+{
+  "endpoint": "POST /transfers",
+  "requests_locust": 64,
+  "failures_locust": 0,
+  "error_rate_percent": 0.0,
+  "mean_latency_ms": 213.04,
+  "requests_observed_server": 64,
+  "peak_concurrent_server": 64,
+  "server_statuses": {
+    "201": 64
+  }
+}

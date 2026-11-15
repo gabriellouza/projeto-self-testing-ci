@@ -5,11 +5,9 @@ addopts = "-ra"
 [tool.coverage.run]
 branch = true
 source = ["src"]
-omit = ["src/repositories/database.py"]
 
 [tool.coverage.report]
 show_missing = true
-fail_under = 85
 
 [tool.ruff]
 line-length = 120

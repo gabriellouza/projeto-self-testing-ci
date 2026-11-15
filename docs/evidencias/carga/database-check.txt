@@ -1,0 +1,3 @@
+Saldos [origem, destino]: [(99936,), (64,)]
+Transferências: 64
+Extratos [tipo, quantidade, soma]: [('credit', 64, 64), ('debit', 64, 64)]
